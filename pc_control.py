@@ -1,26 +1,26 @@
 import serial
-import sys
 
-# Adjust port to your Pico (check with mpremote connect list)
-PORT = "/dev/cu.usbmodem1101"
+PORT = "/dev/cu.usbmodem101"  # adjust for your Pico
 BAUD = 115200
 
 def main():
     with serial.Serial(PORT, BAUD, timeout=1) as ser:
-        print("Connected to Pico. Type commands like 'setdac 12345' or 'readadc 0'.")
+        print("Connected to Pico. Type 'start' first, then 'setdac <V>' or 'readadc <ch>'.")
         print("Press Ctrl+C to quit.\n")
+
+        # Read any startup message
+        startup = ser.readline().decode().strip()
+        if startup:
+            print("<- " + startup)
 
         while True:
             try:
-                # Get user input
                 cmd = input("-> ")
                 if not cmd.strip():
                     continue
 
-                # Send command to Pico
                 ser.write((cmd + "\n").encode())
 
-                # Read response(s)
                 response = ser.readline().decode().strip()
                 if response:
                     print("<- " + response)
